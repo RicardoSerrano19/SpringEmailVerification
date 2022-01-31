@@ -1,13 +1,12 @@
 package com.serrano.app.helpdesk.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -33,23 +32,13 @@ public class User {
         generator = "student_sequence"
     )
     private Long id;
-    @NotEmpty
-    @Size(min = 5, max = 200, message 
-      = "firstName must be between 5 and 100 characters")
     private String firstName;
-    @NotEmpty
-    @Size(min = 5, max = 200, message 
-    = "lastName must be between 5 and 100 characters")
     private String lastName;
-    @NotEmpty
-    @Email(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
-    message = "email must be valid")
     private String email;
-    @NotEmpty
-    @Size(min = 5, max = 100, message 
-    = "password must be between 8 and 100 characters")
     private String password;
+    @Column(columnDefinition = "default true")
     private Boolean locked;
+    @Column(columnDefinition = "default false")
     private Boolean enabled;
 }
 
