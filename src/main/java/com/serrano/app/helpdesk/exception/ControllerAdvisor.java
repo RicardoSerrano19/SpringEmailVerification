@@ -1,6 +1,8 @@
 package com.serrano.app.helpdesk.exception;
 
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,8 +16,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex, WebRequest request) {
+    @ExceptionHandler(EmailNotFoundException.class)
+    public ResponseEntity<Object> handleUserNotFoundException(EmailNotFoundException ex, WebRequest request) {
         HttpStatus status = HttpStatus.NOT_FOUND;
         APIException exception = new APIException(
             ex.getMessage(), 
@@ -28,6 +30,21 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
             HttpHeaders headers, HttpStatus status, WebRequest request) {
-        return super.handleMethodArgumentNotValid(ex, headers, status, request);
+            
+        String error = ex.getBindingResult()
+            .getFieldErrors()
+            .stream()
+            .findFirst()
+            .get().getDefaultMessage();
+           
+
+        APIException exception = new APIException(
+            error, 
+            ex, 
+            status,
+            ZonedDateTime.now());
+
+
+        return new ResponseEntity<>(exception, status);
     }
 }
