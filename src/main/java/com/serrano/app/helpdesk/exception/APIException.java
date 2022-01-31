@@ -11,7 +11,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class APIException {
     private final String message;
-    private final Throwable throwable;
     private final HttpStatus httpStatus;
     private final ZonedDateTime timestamp;
 }

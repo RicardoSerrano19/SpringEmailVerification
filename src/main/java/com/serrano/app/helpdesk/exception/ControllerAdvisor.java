@@ -21,7 +21,6 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         HttpStatus status = HttpStatus.NOT_FOUND;
         APIException exception = new APIException(
             ex.getMessage(), 
-            ex, 
             status,
             ZonedDateTime.now());
         return new ResponseEntity<>(exception,status);
@@ -40,7 +39,6 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         APIException exception = new APIException(
             error, 
-            ex, 
             status,
             ZonedDateTime.now());
 
