@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -44,5 +45,18 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
 
         return new ResponseEntity<>(exception, status);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+            HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+            APIException exception = new APIException(
+                ex.getMessage().split(":")[0],
+                status,
+                ZonedDateTime.now());
+    
+    
+            return new ResponseEntity<>(exception, status);
     }
 }
