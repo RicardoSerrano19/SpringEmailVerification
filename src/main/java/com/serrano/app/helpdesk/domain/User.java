@@ -36,9 +36,9 @@ public class User {
     private String lastName;
     private String email;
     private String password;
-    @Column(columnDefinition = "default true")
+    @Column(columnDefinition = "boolean default true")
     private Boolean locked;
-    @Column(columnDefinition = "default false")
+    @Column(columnDefinition = "boolean default false")
     private Boolean enabled;
 }
 
