@@ -5,10 +5,13 @@ import java.util.Optional;
 import java.util.ArrayList;
 import com.serrano.app.helpdesk.domain.User;
 import com.serrano.app.helpdesk.domain.dto.UserDTO;
+import com.serrano.app.helpdesk.domain.dto.UserRoleDTO;
+import com.serrano.app.helpdesk.exception.EmailDuplicatedException;
 import com.serrano.app.helpdesk.exception.EmailNotFoundException;
 import com.serrano.app.helpdesk.repository.UserRepository;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,10 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserDTO save(UserDTO user) {
+        //Find if email is taken
+        Optional<User> userExist = userRepo.findByEmail(user.getEmail());
+        if(userExist.isPresent()) throw new EmailDuplicatedException(user.getEmail());
+        //Save user
         User entitySaved = userRepo.save(mapper.map(user, User.class));
         UserDTO userMapped = mapper.map(entitySaved, UserDTO.class);
         return userMapped;
@@ -36,9 +43,10 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public List<UserDTO> findAll() {
-        //List<User> entity = userRepo.findAll();
-        List<UserDTO> list = new ArrayList<>();
-        return list;
+    public UserRoleDTO findAll() {
+        List<User> entity = userRepo.findAll();
+        List<UserDTO> userDTO = mapper.map(entity, new TypeToken<List<UserDTO>>(){}.getType());
+        UserRoleDTO userRole = new UserRoleDTO(userDTO);
+        return userRole;
     }
 }

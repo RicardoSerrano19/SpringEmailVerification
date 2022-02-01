@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import com.serrano.app.helpdesk.domain.dto.UserDTO;
+import com.serrano.app.helpdesk.domain.dto.UserRoleDTO;
 import com.serrano.app.helpdesk.service.UserServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,9 @@ public class UserController {
         return new ResponseEntity<UserDTO>(userService.save(user), HttpStatus.CREATED);
     } 
 
-    @GetMapping(path = "/users", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<UserDTO>> findAll(){
-        return new ResponseEntity<List<UserDTO>>(userService.findAll(), HttpStatus.OK);
+    @GetMapping(path = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserRoleDTO> findAll(){
+        return new ResponseEntity<UserRoleDTO>(userService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/users/{email}")
