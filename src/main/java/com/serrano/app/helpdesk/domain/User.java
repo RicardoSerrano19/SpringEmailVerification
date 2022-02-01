@@ -1,12 +1,16 @@
 package com.serrano.app.helpdesk.domain;
 
+import java.util.Set;
+import java.util.HashSet;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -40,11 +44,6 @@ public class User {
     private Boolean locked;
     @Column(columnDefinition = "boolean default false")
     private Boolean enabled;
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<Role> roles = new HashSet<Role>();
 }
-
-
-/*
-import java.util.ArrayList;
-import java.util.Collection;
-    private Collection<Role> roles = new ArrayList<>();
-*/
