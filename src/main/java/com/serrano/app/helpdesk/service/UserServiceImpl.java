@@ -2,7 +2,6 @@ package com.serrano.app.helpdesk.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.ArrayList;
 import com.serrano.app.helpdesk.domain.User;
 import com.serrano.app.helpdesk.domain.dto.UserDTO;
 import com.serrano.app.helpdesk.domain.dto.UserRoleDTO;

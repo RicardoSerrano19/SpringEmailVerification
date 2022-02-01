@@ -33,7 +33,6 @@ public class UserControllerTest {
 
     @Test
     void testGetUsers() throws Exception{
-        User user = new User(1L, "firstName", "lastName", "email", "password", false, false);
 
         mvc.perform(MockMvcRequestBuilders.get("/api/v1/users")
             .contentType(MediaType.APPLICATION_JSON))
@@ -43,7 +42,7 @@ public class UserControllerTest {
 
     @Test
     void saveUser() throws Exception{
-        User user = new User(1L, "firstName", "lastName", "ricardo.sslive.com", "password", false, false);
+        User user = new User(1L, "firstName", "lastName", "ricardo.sslive.com", "password", false, false, null);
 
         RequestBuilder request = MockMvcRequestBuilders.post("/api/v1/users")
             .contentType(MediaType.APPLICATION_JSON)

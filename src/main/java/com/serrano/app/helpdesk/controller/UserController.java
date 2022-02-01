@@ -1,7 +1,5 @@
 package com.serrano.app.helpdesk.controller;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import com.serrano.app.helpdesk.domain.dto.UserDTO;
