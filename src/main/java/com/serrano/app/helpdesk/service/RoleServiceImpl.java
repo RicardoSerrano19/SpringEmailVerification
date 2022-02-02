@@ -39,4 +39,13 @@ public class RoleServiceImpl implements RoleService{
         RolesDTO roles = new RolesDTO(usersDTO);
         return roles;
     }
+
+    @Override
+    public RoleDTO save(RoleDTO role) {
+        RoleName supported = RoleName.asRoleName(role.getName().name());
+        if(supported == null) throw new RoleNotFoundException(role.getName().name());
+        Role entity = mapper.map(role, Role.class);
+        roleRepo.save(entity);
+        return role;
+    }
 }

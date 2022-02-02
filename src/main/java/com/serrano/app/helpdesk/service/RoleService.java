@@ -6,4 +6,5 @@ import com.serrano.app.helpdesk.domain.dto.RolesDTO;
 public interface RoleService {
     RoleDTO get(String name);
     RolesDTO getAll();
+    RoleDTO save(RoleDTO role);
 }
