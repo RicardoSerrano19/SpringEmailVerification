@@ -26,7 +26,7 @@ public class RoleServiceImpl implements RoleService{
     public RoleDTO get(String name) {
         RoleName supported = RoleName.asRoleName(name);
         if(supported == null) throw new RoleNotFoundException(name);
-        Optional<RoleName> roleExist = roleRepo.findByName(supported);
+        Optional<Role> roleExist = roleRepo.findByName(supported);
         if(!roleExist.isPresent()) throw new RoleNotFoundException(name);
         RoleDTO roleDTO = mapper.map(roleExist.get(), RoleDTO.class);
         return roleDTO;
