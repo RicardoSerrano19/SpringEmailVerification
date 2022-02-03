@@ -2,6 +2,7 @@ package com.serrano.app.helpdesk.controller;
 
 import javax.validation.Valid;
 
+import com.serrano.app.helpdesk.domain.dto.RoleToUserDTO;
 import com.serrano.app.helpdesk.domain.dto.UserDTO;
 import com.serrano.app.helpdesk.domain.dto.UserRoleDTO;
 import com.serrano.app.helpdesk.service.UserServiceImpl;
@@ -37,6 +38,11 @@ public class UserController {
     @GetMapping(path = "/users/{email}")
     public ResponseEntity<UserDTO> findByEmail(@PathVariable String email){
         return new ResponseEntity<UserDTO>(userService.get(email), HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/users/roles")
+    public ResponseEntity<RoleToUserDTO> addRoleToUser(@Valid @RequestBody RoleToUserDTO form){
+        return new ResponseEntity<RoleToUserDTO>(userService.addRole(form.getEmail(), form.getRole()), HttpStatus.OK);
     }
 
 }
