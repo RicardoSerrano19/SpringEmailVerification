@@ -4,13 +4,15 @@ import java.util.Set;
 import java.util.HashSet;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.ColumnDefault;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -40,10 +42,10 @@ public class User {
     private String lastName;
     private String email;
     private String password;
-    @Column(columnDefinition = "boolean default true")
+    @ColumnDefault("true")
     private Boolean locked;
-    @Column(columnDefinition = "boolean default false")
+    @ColumnDefault("false")
     private Boolean enabled;
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<Role> roles = new HashSet<Role>();
 }
