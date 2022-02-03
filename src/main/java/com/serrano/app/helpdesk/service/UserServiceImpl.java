@@ -2,17 +2,24 @@ package com.serrano.app.helpdesk.service;
 
 import java.util.List;
 import java.util.Optional;
+
+import com.serrano.app.helpdesk.domain.Role;
 import com.serrano.app.helpdesk.domain.User;
+import com.serrano.app.helpdesk.domain.dto.RoleToUserDTO;
 import com.serrano.app.helpdesk.domain.dto.UserDTO;
 import com.serrano.app.helpdesk.domain.dto.UserRoleDTO;
+import com.serrano.app.helpdesk.enums.RoleName;
 import com.serrano.app.helpdesk.exception.EmailDuplicatedException;
 import com.serrano.app.helpdesk.exception.EmailNotFoundException;
+import com.serrano.app.helpdesk.exception.RoleNotFoundException;
+import com.serrano.app.helpdesk.repository.RoleRepository;
 import com.serrano.app.helpdesk.repository.UserRepository;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -21,6 +28,8 @@ public class UserServiceImpl implements UserService{
     private UserRepository userRepo;
     @Autowired
     private ModelMapper mapper;
+    @Autowired
+    private RoleRepository roleRepo;
 
     @Override
     public UserDTO save(UserDTO user) {
@@ -28,7 +37,10 @@ public class UserServiceImpl implements UserService{
         Optional<User> userExist = userRepo.findByEmail(user.getEmail());
         if(userExist.isPresent()) throw new EmailDuplicatedException(user.getEmail());
         //Save user
-        User entitySaved = userRepo.save(mapper.map(user, User.class));
+        User entitySaved = mapper.map(user, User.class);
+        entitySaved.setLocked(true);
+        entitySaved.setEnabled(false);
+        entitySaved = userRepo.save(entitySaved);
         UserDTO userMapped = mapper.map(entitySaved, UserDTO.class);
         return userMapped;
     }
@@ -47,5 +59,21 @@ public class UserServiceImpl implements UserService{
         List<UserDTO> userDTO = mapper.map(entity, new TypeToken<List<UserDTO>>(){}.getType());
         UserRoleDTO userRole = new UserRoleDTO(userDTO);
         return userRole;
+    }
+
+    @Transactional
+    @Override
+    public RoleToUserDTO addRole(String email, String roleName) {
+        //Search user
+        Optional<User> user = userRepo.findByEmail(email);
+        if(!user.isPresent()) throw new EmailNotFoundException(email);
+        //Search Role
+        RoleName supported = RoleName.asRoleName(roleName);
+        if(supported == null) throw new RoleNotFoundException(roleName);
+        Optional<Role> roleExist = roleRepo.findByName(supported);
+        if(!roleExist.isPresent()) throw new RoleNotFoundException(roleName);
+        //Add role to user
+        user.get().getRoles().add(roleExist.get());
+        return new RoleToUserDTO(email, roleName);
     }
 }
