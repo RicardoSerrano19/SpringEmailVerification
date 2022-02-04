@@ -1,7 +1,9 @@
 package com.serrano.app.helpdesk.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.ArrayList;
 
 import com.serrano.app.helpdesk.domain.Role;
 import com.serrano.app.helpdesk.domain.User;
@@ -18,12 +20,16 @@ import com.serrano.app.helpdesk.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService, UserDetailsService{
 
     @Autowired
     private UserRepository userRepo;
@@ -79,5 +85,16 @@ public class UserServiceImpl implements UserService{
         //Add role to user
         user.get().getRoles().add(roleExist.get());
         return new RoleToUserDTO(email, roleName);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> user = userRepo.findByEmail(username);
+        if(!user.isPresent()) throw new EmailNotFoundException(username);
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        user.get().getRoles().forEach(role -> {
+            authorities.add(new SimpleGrantedAuthority(role.getName().toString()));
+        });
+        return new org.springframework.security.core.userdetails.User(user.get().getEmail(), user.get().getPassword(), authorities);
     }
 }
