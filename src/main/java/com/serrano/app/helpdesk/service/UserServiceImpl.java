@@ -18,6 +18,7 @@ import com.serrano.app.helpdesk.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,8 @@ public class UserServiceImpl implements UserService{
     private ModelMapper mapper;
     @Autowired
     private RoleRepository roleRepo;
+    @Autowired
+    private PasswordEncoder encoder;
 
     @Override
     public UserDTO save(UserDTO user) {
@@ -38,6 +41,7 @@ public class UserServiceImpl implements UserService{
         if(userExist.isPresent()) throw new EmailDuplicatedException(user.getEmail());
         //Save user
         User entitySaved = mapper.map(user, User.class);
+        entitySaved.setPassword(encoder.encode(user.getPassword()));
         entitySaved.setLocked(true);
         entitySaved.setEnabled(false);
         entitySaved = userRepo.save(entitySaved);
