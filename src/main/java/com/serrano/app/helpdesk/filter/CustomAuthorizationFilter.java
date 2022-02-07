@@ -25,6 +25,13 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter{
         //Get authorization header
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
+        //Check if there is not authorization or token is Bearer type
+        if(!(authorizationHeader != null && authorizationHeader.startsWith("Bearer "))){
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        
     }
     
 }
