@@ -7,7 +7,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.serrano.app.helpdesk.utils.CustomJWT;
+
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class CustomAuthorizationFilter extends OncePerRequestFilter{
@@ -31,7 +36,15 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter{
             return;
         }
 
-        
+        try{
+            String token = authorizationHeader.substring("Bearer ".length());
+            DecodedJWT decoded = CustomJWT.decode(token);
+            UsernamePasswordAuthenticationToken authenticationToken = CustomJWT.createAuthenticationToken(decoded);
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            filterChain.doFilter(request, response);
+        }catch(Exception ex){
+            
+        }       
     }
     
 }
