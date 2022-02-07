@@ -22,4 +22,16 @@ public class CustomMapMessage {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), unsuccesfulMsg);
     }
+
+    public static void onAuthenticationSuccessful(HttpServletResponse response, String accessToken,
+            String tokenType, String refreshToken, String milliseconds) throws IOException{
+        Map<String, String> outputMessage = new HashMap<>();
+        outputMessage.put("access_token", accessToken);
+        outputMessage.put("token_type", tokenType);
+        outputMessage.put("refresh_token", refreshToken);
+        outputMessage.put("expires_in", milliseconds);
+
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        new ObjectMapper().writeValue(response.getOutputStream(), outputMessage);
+    }
 }
