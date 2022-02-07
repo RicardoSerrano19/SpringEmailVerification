@@ -2,12 +2,11 @@ package com.serrano.app.helpdesk.filter;
 
 import java.io.IOException;
 
-import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.serrano.app.helpdesk.utils.CustomMapMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,5 +35,11 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
        log.info("Username is : {} and password is: {}", username, password);
        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
        return authenticationManager.authenticate(authenticationToken);
+    }
+
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+            AuthenticationException failed) throws IOException, ServletException {
+            CustomMapMessage.onAuthenticationUnsuccessful(response, failed.getMessage());
     }
 }
