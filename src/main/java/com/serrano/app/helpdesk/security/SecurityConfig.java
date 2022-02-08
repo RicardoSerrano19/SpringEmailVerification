@@ -38,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         http.exceptionHandling().authenticationEntryPoint(new CustomEntryPoint());
         http.exceptionHandling().accessDeniedHandler(new CustomEntryPoint());
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/login", "/api/v1/token/refresh").permitAll();
+        http.authorizeRequests().antMatchers("/login", "/api/v1/token/refresh", "/api/v1/emails**").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/v1/users").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/v1/users/roles").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/v1/users").hasAnyAuthority(RoleName.ROLE_ADMIN.name());
