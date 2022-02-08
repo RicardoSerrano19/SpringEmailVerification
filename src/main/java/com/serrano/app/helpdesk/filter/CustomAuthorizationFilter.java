@@ -9,8 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.serrano.app.helpdesk.utils.CustomJWT;
+import com.serrano.app.helpdesk.utils.CustomMapMessage;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -43,7 +45,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter{
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             filterChain.doFilter(request, response);
         }catch(Exception ex){
-            
+            CustomMapMessage.onError(response, ex.getMessage(), HttpStatus.FORBIDDEN);
         }       
     }
     
