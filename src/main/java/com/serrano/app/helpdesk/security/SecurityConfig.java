@@ -1,5 +1,7 @@
 package com.serrano.app.helpdesk.security;
 
+import com.serrano.app.helpdesk.enums.RoleName;
+import com.serrano.app.helpdesk.exception.CustomEntryPoint;
 import com.serrano.app.helpdesk.filter.CustomAuthenticationFilter;
 import com.serrano.app.helpdesk.filter.CustomAuthorizationFilter;
 
@@ -28,9 +30,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
+        http.authorizeRequests()
+                .antMatchers("/").permitAll()
+                .antMatchers("/h2-console/**").permitAll();
+                http.headers().frameOptions().disable();
+                
+        http.exceptionHandling().authenticationEntryPoint(new CustomEntryPoint());
+        http.exceptionHandling().accessDeniedHandler(new CustomEntryPoint());
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/login", "/api/v1/token/refresh").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/v1/users").permitAll();
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/v1/users/roles").permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/v1/users").hasAnyAuthority(RoleName.ROLE_ADMIN.name());
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/v1/users/{email}").hasAnyAuthority(RoleName.ROLE_ADMIN.name());
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean()));
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
