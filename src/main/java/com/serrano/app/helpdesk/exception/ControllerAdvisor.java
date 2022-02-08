@@ -55,6 +55,16 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exception,status);
     }
 
+    @ExceptionHandler(TokenException.class)
+    public ResponseEntity<Object> handleTokenExceptionException(TokenException ex, WebRequest request){
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        APIException exception = new APIException(
+            ex.getMessage(), 
+            status,
+            ZonedDateTime.now());
+        return new ResponseEntity<>(exception,status);
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
             HttpHeaders headers, HttpStatus status, WebRequest request) {
