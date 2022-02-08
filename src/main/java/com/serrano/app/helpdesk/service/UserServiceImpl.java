@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService, UserDetailsService{
         //Save email validator
         EmailValidator eValidator = EmailValidator.builder()
             .created_at(new Date(System.currentTimeMillis()))
-            .expires_at(new Date(System.currentTimeMillis() + (5 * 60000)))
+            .expires_at(new Date(System.currentTimeMillis() + (1 * 60000)))
             .token(UUID.randomUUID().toString())
             .user(entitySaved)
             .build();
