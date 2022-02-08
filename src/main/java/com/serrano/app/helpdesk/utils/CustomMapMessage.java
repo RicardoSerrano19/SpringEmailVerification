@@ -34,4 +34,14 @@ public class CustomMapMessage {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), outputMessage);
     }
+
+    public static void onError(HttpServletResponse response, String message, HttpStatus status) throws IOException{
+        response.setStatus(status.value());
+        Map<String, String> outputMessage = new HashMap<>();
+        outputMessage.put("status", status.getReasonPhrase());
+        outputMessage.put("message", message);
+        outputMessage.put("timestamp", ZonedDateTime.now().toLocalDateTime().toString());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        new ObjectMapper().writeValue(response.getOutputStream(), outputMessage);
+    }
 }
