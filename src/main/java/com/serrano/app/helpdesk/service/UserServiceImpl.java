@@ -1,10 +1,13 @@
 package com.serrano.app.helpdesk.service;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.ArrayList;
 
+import com.serrano.app.helpdesk.domain.EmailValidator;
 import com.serrano.app.helpdesk.domain.Role;
 import com.serrano.app.helpdesk.domain.User;
 import com.serrano.app.helpdesk.domain.dto.RoleToUserDTO;
@@ -39,6 +42,8 @@ public class UserServiceImpl implements UserService, UserDetailsService{
     private RoleRepository roleRepo;
     @Autowired
     private PasswordEncoder encoder;
+    @Autowired 
+    EmailServiceImpl emailService;
 
     @Override
     public UserDTO save(UserDTO user) {
@@ -51,6 +56,14 @@ public class UserServiceImpl implements UserService, UserDetailsService{
         entitySaved.setLocked(true);
         entitySaved.setEnabled(false);
         entitySaved = userRepo.save(entitySaved);
+        //Save email validator
+        EmailValidator eValidator = EmailValidator.builder()
+            .created_at(new Date(System.currentTimeMillis()))
+            .expires_at(new Date(System.currentTimeMillis() + (5 * 60000)))
+            .token(UUID.randomUUID().toString())
+            .user(entitySaved)
+            .build();
+        emailService.save(eValidator);
         UserDTO userMapped = mapper.map(entitySaved, UserDTO.class);
         return userMapped;
     }
