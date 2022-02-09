@@ -7,6 +7,7 @@ import com.serrano.app.helpdesk.domain.EmailValidator;
 import com.serrano.app.helpdesk.exception.TokenException;
 import com.serrano.app.helpdesk.exception.TokenNotFoundException;
 import com.serrano.app.helpdesk.repository.EmailRepository;
+import com.serrano.app.helpdesk.utils.EmailSender;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 public class EmailServiceImpl implements EmailService{
     @Autowired
     private EmailRepository emailRepo;
+    @Autowired
+    private EmailSender emailSender;
 
     @Override
     public EmailValidator findByToken(String token) {
@@ -39,6 +42,8 @@ public class EmailServiceImpl implements EmailService{
     @Override
     public EmailValidator save(EmailValidator email) {
         EmailValidator emailValidator = emailRepo.save(email);
+        //Send email
+        emailSender.sendSimpleMessage(emailValidator.getUser().getFirstName(), emailValidator.getToken());
         return emailValidator;
     }
 }
