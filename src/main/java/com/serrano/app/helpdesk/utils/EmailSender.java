@@ -31,4 +31,19 @@ public class EmailSender {
             throw new IllegalStateException(ex);
         }
     }
+
+    @Async
+    public void sendSimpleMessage(String name, String token, String to) {
+        try{
+            MimeMessage mimeMessage = emailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+            helper.setText(EmailBuilder.build(name, BASE_URL + "/emails?token=" + token), true);
+            helper.setTo(to);
+            helper.setSubject("Confirm your email");
+            helper.setFrom("javierarriaga1906@gmail.com");
+            emailSender.send(mimeMessage);
+        }catch(MessagingException ex){
+            throw new IllegalStateException(ex);
+        }
+    }
 }
