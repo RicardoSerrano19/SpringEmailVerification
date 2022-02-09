@@ -43,7 +43,7 @@ public class EmailServiceImpl implements EmailService{
     public EmailValidator save(EmailValidator email) {
         EmailValidator emailValidator = emailRepo.save(email);
         //Send email
-        emailSender.sendSimpleMessage(emailValidator.getUser().getFirstName(), emailValidator.getToken());
+        emailSender.sendSimpleMessage(emailValidator.getUser().getFirstName(), emailValidator.getToken(), emailValidator.getUser().getEmail());
         return emailValidator;
     }
 }
