@@ -10,7 +10,7 @@ public class EmailBuilder {
         "       <a href=\"" + link + "\" style=\"background-color: #0928a2;text-decoration: none;color: white;padding: 10px;border-radius: 10px;font-weight: bold;/*! font-size: 20px; */\">Verify now</a> \n" +
         "   </div> \n" +
         "   <div> \n" +
-        "       <p style=\"border-left: 5px solid #fb7600;padding-left: 10px;\">This verification link will expire in 1 minute</p> \n" +
+        "       <p style=\"border-left: 5px solid #fb7600;padding-left: 10px;background-color: #ffe084b8;\">This verification link will expire in 1 minute</p> \n" +
         "   </div> \n" +
         "</div>";
     }
