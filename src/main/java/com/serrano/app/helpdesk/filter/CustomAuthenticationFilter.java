@@ -47,8 +47,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         User user = (User) authResult.getPrincipal();
         int minutesToExpire = 5; 
         String accessToken = CustomJWT.create(user, minutesToExpire, request.getRequestURL().toString(), "roles");
-        String refreshToken = CustomJWT.create(user, minutesToExpire * 2, request.getRequestURL().toString());
-        CustomMapMessage.onAuthenticationSuccessful(response, accessToken, "bearer", refreshToken, String.valueOf(minutesToExpire * 60000));
+        String refreshToken = CustomJWT.create(user, minutesToExpire * 2, request.getRequestURL().toString(), "roles");
+        CustomMapMessage.onAuthenticationSuccessful(response, accessToken, "bearer", refreshToken, String.valueOf(CustomJWT.decode(accessToken).getExpiresAt().getTime()));
     }
 
     @Override
