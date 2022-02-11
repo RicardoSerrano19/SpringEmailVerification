@@ -30,6 +30,17 @@ public class CustomJWT {
                 .sign(ALGORITHM);
     }
 
+    public static String create(com.serrano.app.helpdesk.domain.User user, int minutes, String issuer, String claim, boolean domain){
+        Date date = new Date(System.currentTimeMillis() + (minutes * 60000));
+        String username = user.getEmail();
+        return JWT.create()
+                .withSubject(username)
+                .withExpiresAt(date)
+                .withIssuer(issuer)
+                .withClaim(claim, getClaimValues(user))
+                .sign(ALGORITHM);
+    }
+
     public static String create(User user, int minutes, String issuer){
         Date date = new Date(System.currentTimeMillis() + (minutes * 60000));
         String username = user.getUsername();
@@ -61,6 +72,12 @@ public class CustomJWT {
     private static List<String> getClaimValues(User user){
         return user.getAuthorities().stream()
             .map(role -> role.getAuthority())
+            .collect(Collectors.toList());
+    }
+
+    private static List<String> getClaimValues(com.serrano.app.helpdesk.domain.User user){
+        return user.getRoles().stream()
+            .map(role -> role.getName().name())
             .collect(Collectors.toList());
     }
 }
