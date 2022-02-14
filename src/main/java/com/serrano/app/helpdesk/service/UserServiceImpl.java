@@ -47,25 +47,29 @@ public class UserServiceImpl implements UserService, UserDetailsService{
 
     @Override
     public UserDTO save(UserDTO user) {
-        //Find if email is taken
-        Optional<User> userExist = userRepo.findByEmail(user.getEmail());
-        if(userExist.isPresent()) throw new EmailDuplicatedException(user.getEmail());
-        //Save user
-        User entitySaved = mapper.map(user, User.class);
-        entitySaved.setPassword(encoder.encode(user.getPassword()));
-        entitySaved.setLocked(true);
-        entitySaved.setEnabled(false);
-        entitySaved = userRepo.save(entitySaved);
-        //Save email validator
-        EmailValidator eValidator = EmailValidator.builder()
-            .created_at(new Date(System.currentTimeMillis()))
-            .expires_at(new Date(System.currentTimeMillis() + (1 * 60000)))
-            .token(UUID.randomUUID().toString())
-            .user(entitySaved)
-            .build();
-        emailService.save(eValidator);
-        UserDTO userMapped = mapper.map(entitySaved, UserDTO.class);
-        return userMapped;
+    	try {
+    		//Find if email is taken
+    		Optional<User> userExist = userRepo.findByEmail(user.getEmail());
+    		if(userExist.isPresent()) throw new EmailDuplicatedException(user.getEmail());
+    		//Save user
+    		User entitySaved = mapper.map(user, User.class);
+    		entitySaved.setPassword(encoder.encode(user.getPassword()));
+    		entitySaved.setLocked(true);
+    		entitySaved.setEnabled(false);
+    		entitySaved = userRepo.save(entitySaved);
+    		//Save email validator
+    		EmailValidator eValidator = EmailValidator.builder()
+    				.created_at(new Date(System.currentTimeMillis()))
+    				.expires_at(new Date(System.currentTimeMillis() + (1 * 60000)))
+    				.token(UUID.randomUUID().toString())
+    				.user(entitySaved)
+    				.build();
+    		emailService.save(eValidator);
+    		UserDTO userMapped = mapper.map(entitySaved, UserDTO.class);
+    		return userMapped;
+    	}catch(RuntimeException ex) {
+    		throw ex;
+    	}
     }
 
     @Override

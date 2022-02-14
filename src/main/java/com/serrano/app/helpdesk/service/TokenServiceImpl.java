@@ -14,6 +14,7 @@ import com.serrano.app.helpdesk.utils.CustomMapMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -32,9 +33,9 @@ public class TokenServiceImpl implements TokenService{
               throw new RuntimeException("Refresh Token is missing");
           }
 
-          try{
             String refreshToken = authorizationHeader.substring("Bearer ".length());
 
+          try{
             DecodedJWT decoded = CustomJWT.decode(refreshToken);
             String email = decoded.getSubject();
             Optional<User> user = userRepo.findByEmail(email);
@@ -43,7 +44,16 @@ public class TokenServiceImpl implements TokenService{
             String accessToken = CustomJWT.create(user.get(), minutesToExpire, request.getRequestURL().toString(), "roles", true);
             CustomMapMessage.onAuthenticationSuccessful(response, accessToken, "bearer", refreshToken, String.valueOf(minutesToExpire * 60000));
           }catch(Exception ex){
-              System.out.println("Error");
+              try {
+            	if(ex instanceof UsernameNotFoundException) {
+            		CustomMapMessage.onError(response, "Username not found", HttpStatus.BAD_REQUEST);            		
+            	}else {
+            		CustomMapMessage.onError(response, ex.getLocalizedMessage(), HttpStatus.BAD_REQUEST);            		
+            	}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
           }
     }
     
